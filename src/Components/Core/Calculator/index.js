@@ -12,8 +12,8 @@ export default function Calculator() {
   const [previousValue, setPreviousValue] = useState("");
   const [operationValue, setOperationValue] = useState("");
 
-  const handleClick = (data) => {
-    if (data === "." && currentValue.includes(".")) return;
+  const handleClickNumber = (data) => {
+    if (data === "." && String(currentValue).includes(".")) return;
     setCurrentValue((prev) => prev + data);
   }
 
@@ -27,34 +27,79 @@ export default function Calculator() {
     setCurrentValue(String(currentValue).slice(0, -1));
   }
 
+  const compute = () => {
+    let result;
+    const previousNumber = parseFloat(previousValue);
+    const currentNumber = parseFloat(currentValue);
+    switch (operationValue) {
+      case "%":
+        result = previousNumber / currentNumber;
+        break;
+      case "X":
+        result = previousNumber * currentNumber;
+        break;
+      case "+":
+        result = previousNumber + currentNumber;
+        break;
+      case "-":
+        result = previousNumber - currentNumber;
+        break;
+      default:
+        return;
+    }
+    return result;
+  };
+
+  const handleClickOperator = (data) => {
+    if (currentValue === "") return;
+    
+    if (previousValue !== "") {
+      setPreviousValue(compute());
+    } 
+    else 
+    {
+      setPreviousValue(currentValue);
+    }
+    setCurrentValue("");
+    setOperationValue(data);
+  }
+
+  const handleClickCompute = () => {
+    let value = compute();
+    if (value === undefined || value == null) return;
+    setCurrentValue(value);
+    setPreviousValue("");
+    setOperationValue("");
+  };
+
   return (
     <div>
-        <Container>
-          <Screen>
-              <Current>{currentValue}</Current>
-              <Previous>{previousValue} {operationValue}</Previous>
-          </Screen>
-          <ButtonContainer>
-            <Button spanTwoColumn control onClick={() => handleAC()}>AC</Button>
-            <Button onClick={() => handleDEL()}>DEL</Button>
-            <Button operation>%</Button>
-            <Button onClick={() => handleClick("7")}>7</Button>
-            <Button onClick={() => handleClick("8")}>8</Button>
-            <Button onClick={() => handleClick("9")}>9</Button>
-            <Button operation>X</Button>
-            <Button onClick={() => handleClick("4")}>4</Button>
-            <Button onClick={() => handleClick("5")}>5</Button>
-            <Button onClick={() => handleClick("6")}>6</Button>
-            <Button operation>+</Button>
-            <Button onClick={() => handleClick("1")}>1</Button>
-            <Button onClick={() => handleClick("2")}>2</Button>
-            <Button onClick={() => handleClick("3")}>3</Button>
-            <Button operation>-</Button>
-            <Button onClick={() => handleClick(".")}>.</Button>
-            <Button onClick={() => handleClick("0")}>0</Button>
-            <Button spanTwoColumn operation>=</Button>
-          </ButtonContainer>
-        </Container>
+      <Container>
+        <Screen>
+          <Previous>{previousValue} {operationValue}</Previous>
+          <Current>{currentValue}</Current>
+        </Screen>
+        <ButtonContainer>
+          <Button spanTwoColumn control onClick={() => handleAC()}>AC</Button>
+          <Button onClick={() => handleDEL()}>DEL</Button>
+          <Button operation onClick={() => handleClickOperator("%")}>%</Button>
+          <Button onClick={() => handleClickNumber("7")}>7</Button>
+          <Button onClick={() => handleClickNumber("8")}>8</Button>
+          <Button onClick={() => handleClickNumber("9")}>9</Button>
+          <Button operation onClick={() => handleClickOperator("X")}>X</Button>
+          <Button onClick={() => handleClickNumber("4")}>4</Button>
+          <Button onClick={() => handleClickNumber("5")}>5</Button>
+          <Button onClick={() => handleClickNumber("6")}>6</Button>
+          <Button operation onClick={() => handleClickOperator("+")}>+</Button>
+          <Button onClick={() => handleClickNumber("1")}>1</Button>
+          <Button onClick={() => handleClickNumber("2")}>2</Button>
+          <Button onClick={() => handleClickNumber("3")}>3</Button>
+          <Button operation onClick={() => handleClickOperator("-")}>-</Button>
+          <Button onClick={() => handleClickNumber(".")}>.</Button>
+          <Button onClick={() => handleClickNumber("0")}>0</Button>
+          <Button spanTwoColumn operation onClick={handleClickCompute}>=</Button>
+        </ButtonContainer>
+      </Container>
     </div>
   )
 }
