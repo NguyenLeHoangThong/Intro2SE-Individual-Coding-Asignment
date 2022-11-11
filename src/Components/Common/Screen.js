@@ -13,7 +13,7 @@ export const Screen = styled.div`
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding: 12px;
-
+    overflow: auto;
     @media (max-width: 576px) {
         flex-grow: 1;
         border-radius: 0px;
